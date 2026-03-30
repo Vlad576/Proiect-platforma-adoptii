@@ -1,0 +1,23 @@
+@startuml platforma-adoptii
+left to right direction
+
+rectangle "Animal" as Animal
+
+rectangle "Adoptator" as Adoptator
+
+rectangle "Adoptie" as Adoptie
+
+
+rectangle "Angajat" as Angajat{
+	rectangle "Veterinar" as Veterinar
+	rectangle "Receptioner" as Receptioner
+	rectangle "Voluntar" as Voluntar
+}
+
+Angajat "1(1)" -- "1(0)" Veterinar : ISA
+Angajat "1(1)" -- "1(0)" Receptioner : ISA
+Angajat "1(1)" -- "1(0)" Voluntar : ISA
+
+Adoptator "1(1)" --- "m(1)" Adoptie
+Animal "1(1)" --- "m(1)" Adoptie
+
