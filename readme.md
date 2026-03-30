@@ -31,7 +31,7 @@ să _adopte_ un animal, va putea să facă asta cu ajutorul unui
 _angajat_.
 
 ## 6. Diagrama entitate-relație
-![Diagrama entitate-relație](.\resurse\img\schema-er-platforma-adoptii.png)
+![Diagrama entitate-relație](resurse/img/schema-er-platforma-adoptii.png)
 
 ## 7. Diagrama conceptuală
-![Diagrama conceptuală](.\resurse\img\schema-conceptuala-platforma-adoptii.png)
+![Diagrama conceptuală](resurse/img/schema-conceptuala-platforma-adoptii.png)
