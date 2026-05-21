@@ -25,10 +25,219 @@ principiu în ordine descrescătoare a mărimii pentru confortul și
 nevoile animalelor. Bineînțeles, o cușcă poate rămâne goală.
 
 Un om care dorește să viziteze adăpostul și să adopte un animal se va 
-numi _adoptator_. Acesta poate face mai multe _vizite_ pentru a 
+numi _client_. Acesta poate face mai multe _vizite_ pentru a 
 cunoaște animăluțele adăpostului, iar, în momentul în care ia decizia 
 să _adopte_ un animal, va putea să facă asta cu ajutorul unui 
 _angajat_.
+
+Totodată un _client_ poate să facă o _donație_ care să reprezinte o valoare monetară înregistrată în _tranzacții_, sau mâncare pentru animăluțe înregistrată în _aprovizionare hrană_.
+
+Pentru cumpărarea de hrană, fiecare aprovizionare va fi înregistrată de un _angajat_ în tabelul de _tranzacții_, dinpreună cu _aprovizionarea_ și _tipurile de hrană_. 
+
+
+## 2. Prezentarea constrângerilor impuse asupra modelului
+- Orice _cușcă_ trebuie să aibă mai mult de 1 metru pătrat
+- Orice _animal_ trebuie să aibă propria _cușcă_
+- O adopție trebuie să aibă exact un _animal_, un _client_, și un _angajat_ care să proceseze informațiile
+- O _vizită_ trebuie să aibă exact un _client_
+- O _donație_ trebuie să aibă exact un _client_
+- O _donație_ este fie o _tranzacție_, fie o _aprovizionare cu hrană_
+- O _aprovizionare de hrană_ trebuie să aibă măcar un _tip de hrană_
+- _Programul unei zile_ trebuie să aibă măcar o _tură_, iar fiecare _tură_ trebuie să fie repartizată într-o anumită zi
+- O _tranzacție_ mai mare de 500 de lei va necesita prezența unui _angajat_ pentru a fi procesată
+- Un _voluntar_ nu poate procesa _tranzacții_
+- Unui _client_ trebuie să i se știe fie numărul de telefon fie adresa de e-mail.
+
+## 3. Descrierea entităților
+
+### Cușcă
+**Cheie primară:** id_cușcă
+- Înregistrarea cuștilor aferente spațiului în care sunt ținute animalele, cu detalii relevante
+### Animal
+**Cheie primară:** id_animal
+- Înregistrarea animalelor din adăpost, dinpreună cu rasa, nume sau alte detalii relevante
+### Vizită
+**Cheie primară:** id_vizită
+- Atunci când un client este interesat să adopte animale, acesta poate să programeze o vizită
+pentru a cunoaște animăluțele și a interacționa cu ele
+### Client
+**Cheie primară:** id_client
+- Orice potențial adoptator, oameni care doresc să facă vizite adăpostului sau donatori sunt
+considerați clienți și înregistrați în sistem
+### Adopție
+**Cheie primară:** id_adopție
+- Momentul fericit al unei adopții este înregistrat prin acest tabel de aritate 3 dinpreună
+cu informațiile clientului, al animăluțului adoptat și al angajatului care a procesat adopția
+### Angajat
+**Cheie primară:** id_angajat
+- Toți angajații firmei sunt înregistrați în acest tabel, cu informațiile aferente poziției pe 
+care o au: veterinar, recepționer sau voluntar
+### Donație
+**Cheie primară:** id_donație
+- Donațiile care se fac pentru adăpost sunt înregistrate în acest tabel, fie că aceste sunt
+monetare sau de hrană
+### Tranzacție
+**Cheie primară:** id_tranzacție
+- Orice tip de venit sau cheltuială este înregistrată în acest tabel, pentru a putea ține evidența
+financiară
+### Aprovizionare hrană
+**Cheie primară:** id_aprovizionare
+- Aprovizionările cu hrană, fie că acestea sunt cumpărate din veniturile clinicii sau donații sunt înregistrate aici
+### Tip hrană
+**Cheie primară:** id_tip_hrana
+- Fiecare aprovizionare cu hrană conține unul sau mai multe tipuri de hrană (de căței, de pisici,
+pentru juniori, pentru adulți etc)
+### Tura
+**Cheie primară:** data, id_angajat
+- Programul pe o zi este împărțit în ture, astfel că un angajat este repartizat pe fiecare tură
+### Program zi
+**Cheie primară:** data
+- Colecție de ture care constituie un program zilnic
+
+## 4. Descrierea relațiilor
+### Cușcă - Animal
+- one-to-one
+### Animal - Vizită
+- many-to-many
+### Client - Vizită
+- one-to-many
+### Adopție: Animal - Client - Angajat
+- one-to-many-to-many
+- relație de aritate 3
+### Client - Donație
+- one-to-many
+### Donație - Tranzacție
+- one-to-one
+### Donație - Aprovizionare Hrană
+- one-to-one
+### Aprovizionare Hrană - Tip Hrană
+- one-to-many
+### Angajat - Tranzacție
+- one-to-many
+### Angajat - Tură
+- one-to-many
+### Tură - Program Zi
+- many-to-one
+
+## 5. Descrierea atributelor
+atribut 
+tip de date 
+constrângeri 
+valori posibile/exemple
+valori implicite
+observatii
+
+### Cușcă
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_cusca|NUMBER(13)|PK||||
+|capacitate|NUMBER(2,2)|NOT NULL, capacitate > 1|||Spațiul disponibil în cușcă în metri pătrați|
+|locatie|ENUM, VARCHAR2||interior, exterior|interior||
+
+
+### Animal
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_animal|NUMBER(13)|PK||||
+|id_cusca|NUMBER(13)|FK, NOT NULL||||
+|specie|VARCHAR2|NOT NULL|câine, pisică, papagal, etc.|||
+|rasa|VARCHAR2||terrier, sfinx, etc.|||
+|in_tratament|NUMBER(1)|in_tratament IN (0, 1)|||Este animalul în tratament la clinică sau nu|
+|data_aducere|DATE|NOT NULL|||Când a fost animalul adus în adăpost|
+
+### Vizită Animal
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_animal|NUMBER(13)|PK FK||||
+|id_vizită|NUMBER(13)|PK FK||||
+
+### Vizită
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_vizită|NUMBER(13)|PK||||
+|id_client|NUMBER(13)|FK, NOT NULL||||
+|data_ora|DATETIME|NOT NULL||||
+|detalii|VARCHAR2||potential adoptator, client donator, interesat să ia un cățel, etc.||Alte detalii relevante vizitei|
+
+### Client
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_client|NUMBER(13)|PK||||
+|nume|VARCHAR2|NOT NULL||||
+|prenume|VARCHAR2|NOT NULL||||
+|telefon|VARCHAR2|telefon IS NOT NULL OR email IS NOT NULL||||
+|email|VARCHAR2|telefon IS NOT NULL OR email IS NOT NULL||||
+
+### Adopție
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_adopție|NUMBER(13)|PK||||
+|id_angajat|NUMBER(13)|FK, NOT NULL||||
+|id_animal|NUMBER(13)|FK, NOT NULL||||
+|id_adoptator|NUMBER(13)|FK, NOT NULL||||
+|data|DATE|||||
+
+### Angajat
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_angajat|NUMBER(13)|PK||||
+|nume|VARCHAR2|NOT NULL||||
+|prenume|VARCHAR2|NOT NULL||||
+|telefon|VARCHAR2|NOT NULL||||
+|email|VARCHAR2|NOT NULL||||
+|data_angajare|DATE|NOT NULL||||
+|pozitie|ENUM, VARCHAR2|NOT NULL|veterinar, receptioner, voluntar|||
+
+### Donație
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_donatie|NUMBER(13)|PK||||
+|id_client|NUMBER(13)|FK, NOT NULL||||
+|id_tranzactie|NUMBER(13)|FK||||
+|id_aprovizionare|NUMBER(13)|FK||||
+
+### Tranzacție
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_tranzactie|NUMBER(13)|PK||||
+|id_angajat|NUMBER(13)|FK, suma <= 500 OR id_angajat IS NOT NULL||||
+|suma|NUMBER(10,2)|NOT NULL, suma <= 500 OR id_angajat IS NOT NULL||||
+|data_ora|DATETIME|NOT NULL||||
+|detalii|VARCHAR2||donatie, mancare, etc.|||
+
+### Aprovizionare hrană
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_aprovizionare|NUMBER(13)|PK||||
+|id_tranzactie|NUMBER(13)|FK||||
+|data_ora|DATETIME|NOT NULL||||
+|furnizor|VARCHAR2||royal canin, marin popescu, etc.||De unde a fost cumpărată mâncarea|
+
+### Tip hrană
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|id_tip_hrana|NUMBER(13)|PK||||
+|id_tranzactie|NUMBER(13)|FK, NOT NULL||||
+|tip_mancare|VARCHAR2|NOT NULL|mâncare uscată, mâncare umedă, semințe, etc.|||
+|firma|VARCHAR2|NOT NULL|royal canin, whiskas, etc.|||
+|denumire|VARCHAR2|||||
+|detalii|VARCHAR2||mancare regim, etc.|||
+|cantitate|NUMBER(10,3)|NOT NULL|||Cantitatea fară a se preciza unitatea de măsură|
+|um|VARCHAR2|NOT NULL|kg, g, unitati, etc.|g||
+
+### Tura
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|data|NUMBER(13)|PK FK||||
+|id_angajat|NUMBER(13)|PK FK||||
+|detalii|VARCHAR2||tura de inchidere, tura aglomerata, etc.|||
+
+### Program zi
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+|----|--------|---|---|---|---|
+|data|NUMBER(13)|PK||||
+|tip_zi|VARCHAR2|NOT NULL|normala, eveniment, inventar, dezinsectie, deratizare, etc.|||
+
 
 ## 6. Diagrama entitate-relație
 ![Diagrama entitate-relație](resurse/img/schema-er-platforma-adoptii.png)
