@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="A1t5_ixmi6wKDEfljeF3" name="Page-1">
-        <mxGraphModel dx="361" dy="254" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+        <mxGraphModel dx="766" dy="254" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -136,7 +136,7 @@
                 <mxCell id="102" value="APROVIZIONARE&lt;div&gt;HRANA&lt;/div&gt;&lt;div&gt;PK id_aprovizionare&lt;/div&gt;&lt;div&gt;FK id_tranzactie&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1030" y="450" width="120" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="103" value="TIP HRANA&lt;div&gt;PK id_tip_hrana&lt;/div&gt;&lt;div&gt;FK id_tranzactie&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="103" value="TIP HRANA&lt;div&gt;PK id_tip_hrana&lt;/div&gt;&lt;div&gt;FK id_aprovizionare&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1030" y="655" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="104" value="" style="endArrow=ERzeroToOne;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;endFill=0;startArrow=ERzeroToOne;startFill=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="101" target="96" edge="1">

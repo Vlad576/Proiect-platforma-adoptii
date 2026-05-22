@@ -140,6 +140,7 @@ observatii
 |----|--------|---|---|---|---|
 |id_animal|NUMBER(13)|PK||||
 |id_cusca|NUMBER(13)|FK, NOT NULL||||
+|nume|VARCHAR2||||Numele animăluțului (dacă există)|
 |specie|VARCHAR2|NOT NULL|câine, pisică, papagal, etc.|||
 |rasa|VARCHAR2||terrier, sfinx, etc.|||
 |in_tratament|NUMBER(1)|in_tratament IN (0, 1)|||Este animalul în tratament la clinică sau nu|
@@ -217,8 +218,8 @@ observatii
 | Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
 |----|--------|---|---|---|---|
 |id_tip_hrana|NUMBER(13)|PK||||
-|id_tranzactie|NUMBER(13)|FK, NOT NULL||||
-|tip_mancare|VARCHAR2|NOT NULL|mâncare uscată, mâncare umedă, semințe, etc.|||
+|id_aprovizionare|NUMBER(13)|FK, NOT NULL||||
+|tip_mancare|VARCHAR2|NOT NULL|mâncare uscată căței, mâncare umedă pisici, semințe, etc.|||
 |firma|VARCHAR2|NOT NULL|royal canin, whiskas, etc.|||
 |denumire|VARCHAR2|||||
 |detalii|VARCHAR2||mancare regim, etc.|||
@@ -244,3 +245,107 @@ observatii
 
 ## 7. Diagrama conceptuală
 ![Diagrama conceptuală](resurse/img/schema-conceptuala-platforma-adoptii.png)
+
+## 8. Enumerarea schemelor relaționale
+**CUSCA**(#id_cusca, capacitate, locatie)
+
+**ANIMAL**(#id_animal, id_cusca, nume, specie, rasa, in_tratament, data_aducere)
+
+**VIZITA_ANIMAL**(#id_animal, #id_vizita)
+
+**VIZITA**(#id_vizita, id_client, data_ora, detalii)
+
+**CLIENT**(#id_client, nume, prenume, telefon, email)
+
+**ADOPTIE**(#id_adoptie, id_angajat, id_animal, id_adoptator, data)
+
+**ANGAJAT**(#id_angajat, nume, prenume, telefon, email, data_angajare, pozitie)
+
+**DONATIE**(#id_donatie, id_client, id_tranzactie, id_aprovizionare)
+
+**TRANZACTIE**(#id_tranzactie, id_angajat, suma, data_ora, detalii)
+
+**APROVIZIONARE_HRANA**(#id_aprovizionare, id_tranzactie, data_ora, furnizor)
+
+**TIP_HRANA**(#id_tip_hrana, id_aprovizionare, tip_mancare, firma, denumire, detalii, cantitate, um)
+
+**TURA**(#data, #id_angajat, detalii)
+
+**PROGRAM_ZI**(#data, tip_zi)
+
+
+## 9. Realizarea normalizării până la forma normală 3 - contraexemple
+
+### FN1
+
+- **Contraexemplu**
+
+**ANGAJAT**
+|#id_angajat|nume|prenume|contact|data_angajare|pozitie|
+|-----------|----|-------|-------|-------------|-------|
+|       1234|dinu|  maria|0712345678, maria.dinu@gmail.com|2025-07-01|receptioner|
+***
+
+- **Soluție**
+
+**ANGAJAT**
+|#id_angajat|nume|prenume|telefon|email|data_angajare|pozitie|
+|-----------|----|-------|-------|-----|-------------|-------|
+|       1234|dinu|  maria|0712345678|maria.dinu@gmail.com|2025-07-01|receptioner|
+***
+**Argument**
+
+Coloana _contact_ nu este atomizată, putând să aibă mai multe valori. Se aduce la FN1 prin împărțirea valorilor posibile în coloane diferite.
+
+### FN2
+
+- **Contraexemplu**
+
+**VIZITA_ANIMAL**
+|#id_animal|#id_vizita|nume_animal|
+|----------|----------|-----------|
+|       123|       456|       spot|
+
+***
+- **Soluție**
+
+**VIZITA_ANIMAL**
+|#id_animal|#id_vizita|
+|----------|----------|
+|       123|       456|
+
+**ANIMAL**
+|#id_animal|nume|
+|----------|----|
+|       123|spot|
+
+***
+- **Argument**
+
+Coloana _nume_ depinde doar de atributul *#id_animal* din cheia primară, nu de întreaga cheie. Așadar, se elimină coloana și se adaugă în tabelul cu informațiile despre animale.
+
+### FN3
+- **Contraexemplu**
+
+**TRANZACTIE**
+|#id_tranzactie|id_angajat|nume_angajat|suma|data_ora|detalii|
+|--------------|----------|------------|----|--------|-------|
+|123|456|petrescu|789.02| 2026-02-15 13:29:53||
+
+***
+- **Soluție**
+
+**TRANZACTIE**
+|#id_tranzactie|id_angajat|suma|data_ora|detalii|
+|--------------|----------|----|--------|-------|
+|123|456|789.02| 2026-02-15 13:29:53||
+
+**ANGAJAT**
+|id_angajat|nume_angajat|
+|-|-|
+|456|petrescu|
+
+***
+- **Argument**
+
+Coloana *nume_angajat* este dependentă de coloana non-cheie primară *id_angajat*. Pentru a aduce tabelele la forma normală 3, se mută coloana *nume_angajat* în tabelul aferent informațiilor cu angajații.
