@@ -1,0 +1,3 @@
+CREATE USER proiect IDENTIFIED BY proiect;
+GRANT DBA TO proiect;
+ALTER USER proiect QUOTA UNLIMITED ON users;

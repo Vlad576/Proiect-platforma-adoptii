@@ -83,8 +83,8 @@ financiară
 ### Aprovizionare hrană
 **Cheie primară:** id_aprovizionare
 - Aprovizionările cu hrană, fie că acestea sunt cumpărate din veniturile clinicii sau donații sunt înregistrate aici
-### Tip hrană
-**Cheie primară:** id_tip_hrana
+### Hrană
+**Cheie primară:** id_hrana
 - Fiecare aprovizionare cu hrană conține unul sau mai multe tipuri de hrană (de căței, de pisici,
 pentru juniori, pentru adulți etc)
 ### Tura
@@ -110,8 +110,8 @@ pentru juniori, pentru adulți etc)
 - one-to-one
 ### Donație - Aprovizionare Hrană
 - one-to-one
-### Aprovizionare Hrană - Tip Hrană
-- one-to-many
+### Aprovizionare Hrană - Hrană
+- many-to-many
 ### Angajat - Tranzacție
 - one-to-many
 ### Angajat - Tură
@@ -120,12 +120,6 @@ pentru juniori, pentru adulți etc)
 - many-to-one
 
 ## 5. Descrierea atributelor
-atribut 
-tip de date 
-constrângeri 
-valori posibile/exemple
-valori implicite
-observatii
 
 ### Cușcă
 | Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
@@ -141,6 +135,7 @@ observatii
 |id_animal|NUMBER(13)|PK||||
 |id_cusca|NUMBER(13)|FK, NOT NULL||||
 |nume|VARCHAR2||||Numele animăluțului (dacă există)|
+|data_nastere|DATE|NOT NULL|||Data aproximativă de naștere a animalului|
 |specie|VARCHAR2|NOT NULL|câine, pisică, papagal, etc.|||
 |rasa|VARCHAR2||terrier, sfinx, etc.|||
 |in_tratament|NUMBER(1)|in_tratament IN (0, 1)|||Este animalul în tratament la clinică sau nu|
@@ -179,15 +174,33 @@ observatii
 |data|DATE|||||
 
 ### Angajat
-| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii |
 |----|--------|---|---|---|---|
 |id_angajat|NUMBER(13)|PK||||
 |nume|VARCHAR2|NOT NULL||||
 |prenume|VARCHAR2|NOT NULL||||
 |telefon|VARCHAR2|NOT NULL||||
 |email|VARCHAR2|NOT NULL||||
-|data_angajare|DATE|NOT NULL||||
-|pozitie|ENUM, VARCHAR2|NOT NULL|veterinar, receptioner, voluntar|||
+|data_angajare|DATE|NOT NULL||SYSDATE||
+
+### Veterinar
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii |
+|----|--------|---|---|---|---|
+|id_angajat|NUMBER(13)|PK FK||||
+|specializare|VARCHAR2||pasari, animale mari, etc.|general||
+
+
+### Recepționer
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii |
+|----|--------|---|---|---|---|
+|id_angajat|NUMBER(13)|PK FK||||
+|tura_preferata|VARCHAR2||dimineata, seara, oricare, etc.|||
+
+### Voluntar
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii |
+|----|--------|---|---|---|---|
+|id_angajat|NUMBER(13)|PK FK||||
+|ocupatie|VARCHAR2||elev, suudent, angajat, etc.|||
 
 ### Donație
 | Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
@@ -214,23 +227,30 @@ observatii
 |data_ora|DATETIME|NOT NULL||||
 |furnizor|VARCHAR2||royal canin, marin popescu, etc.||De unde a fost cumpărată mâncarea|
 
-### Tip hrană
+### Comandă Hrană
+| Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii |
+|----|--------|---|---|---|---|
+|id_hrana|NUMBER(13)|PK FK||||
+|id_aprovizionare|NUMBER(13)|PK FK||||
+|cantitate|NUMBER(10,3)|NOT NULL|||Cantitatea fară a se preciza unitatea de măsură|
+|um|VARCHAR2|NOT NULL|kg, g, unitati, etc.|g||
+
+### Hrană
 | Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
 |----|--------|---|---|---|---|
-|id_tip_hrana|NUMBER(13)|PK||||
-|id_aprovizionare|NUMBER(13)|FK, NOT NULL||||
+|id_hrana|NUMBER(13)|PK||||
 |tip_mancare|VARCHAR2|NOT NULL|mâncare uscată căței, mâncare umedă pisici, semințe, etc.|||
 |firma|VARCHAR2|NOT NULL|royal canin, whiskas, etc.|||
 |denumire|VARCHAR2|||||
 |detalii|VARCHAR2||mancare regim, etc.|||
-|cantitate|NUMBER(10,3)|NOT NULL|||Cantitatea fară a se preciza unitatea de măsură|
-|um|VARCHAR2|NOT NULL|kg, g, unitati, etc.|g||
+
 
 ### Tura
 | Atribut | Tip de Date | Constrângeri | Valori Posibile/Exemple | Valori Implicite | Observatii
 |----|--------|---|---|---|---|
-|data|NUMBER(13)|PK FK||||
+|data_ora|DATETIME|PK FK||||
 |id_angajat|NUMBER(13)|PK FK||||
+|durata|NUMBER(4,2)||||Durata în ore a turei|
 |detalii|VARCHAR2||tura de inchidere, tura aglomerata, etc.|||
 
 ### Program zi
@@ -249,7 +269,7 @@ observatii
 ## 8. Enumerarea schemelor relaționale
 **CUSCA**(#id_cusca, capacitate, locatie)
 
-**ANIMAL**(#id_animal, id_cusca, nume, specie, rasa, in_tratament, data_aducere)
+**ANIMAL**(#id_animal, id_cusca, nume, data_nastere, specie, rasa, in_tratament, data_aducere)
 
 **VIZITA_ANIMAL**(#id_animal, #id_vizita)
 
@@ -261,13 +281,21 @@ observatii
 
 **ANGAJAT**(#id_angajat, nume, prenume, telefon, email, data_angajare, pozitie)
 
+**VETERINAR**(#id_angajat, specializare)
+
+**RECEPTIONER**(#id_angajat, tura_preferata)
+
+**VOLUNTAR**(#id_angajat, ocupatie)
+
 **DONATIE**(#id_donatie, id_client, id_tranzactie, id_aprovizionare)
 
 **TRANZACTIE**(#id_tranzactie, id_angajat, suma, data_ora, detalii)
 
 **APROVIZIONARE_HRANA**(#id_aprovizionare, id_tranzactie, data_ora, furnizor)
 
-**TIP_HRANA**(#id_tip_hrana, id_aprovizionare, tip_mancare, firma, denumire, detalii, cantitate, um)
+**COMANDA_HRANA**(#id_aprovizionare, #id_hrana)
+
+**HRANA**(#id_hrana, tip_mancare, firma, denumire, detalii, cantitate, um)
 
 **TURA**(#data, #id_angajat, detalii)
 

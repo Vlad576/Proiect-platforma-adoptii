@@ -1,0 +1,70 @@
+erDiagram
+    OBIECTIV_TURISTIC {
+        NUMBER id_obiectiv 
+        VARCHAR2 nume
+        VARCHAR2 descriere
+        VARCHAR2 adresa
+        VARCHAR2 oras
+        VARCHAR2 tip_obiectiv
+        NUMBER medie_rating
+    }
+    PARC {
+        NUMBER id_obiectiv
+        NUMBER suprafata
+        VARCHAR2 tip_vegetatie
+        VARCHAR2 facilitati
+    }
+    MONUMENT {
+        NUMBER id_obiectiv
+        DATE data_constructie
+        VARCHAR2 stil_architectural
+        VARCHAR2 istorie
+    }
+    FOTOGRAFII_OBIECTIV {
+        NUMBER id_obiectiv
+        NUMBER id_fotografie
+        VARCHAR2 url_fotografie
+        CLOB descriere_fotografie
+        DATE data_incarcare
+    }
+    UTILIZATOR {
+        NUMBER id_utilizator
+        VARCHAR2 nume_user
+        VARCHAR2 email
+        VARCHAR2 parola
+        DATE data_inregistrare
+    }
+    RATING {
+        NUMBER id_utilizator
+        NUMBER id_obiectiv
+        NUMBER rating
+        VARCHAR2 comentariu
+        DATE data_rating
+    }
+    FAVORITE {
+        NUMBER id_utilizator
+        NUMBER id_obiectiv
+    }
+    PROGRAM {
+        NUMBER id_program
+        NUMBER id_obiectiv
+        VARCHAR2 zi
+        VARCHAR2 ora_deschidere
+        VARCHAR2 ora_inchidere
+        NUMBER tarif
+    }
+    URMARESTE {
+        NUMBER id_utilizator
+        NUMBER id_followed
+    }
+
+    OBIECTIV_TURISTIC ||--o| PARC : "este"
+    OBIECTIV_TURISTIC ||--o| MONUMENT : "este"
+    OBIECTIV_TURISTIC ||--o{ FOTOGRAFII_OBIECTIV : "are"
+    OBIECTIV_TURISTIC ||--o{ RATING : "primeste"
+    OBIECTIV_TURISTIC ||--o{ FAVORITE : "apare in"
+    OBIECTIV_TURISTIC ||--o{ PROGRAM : "are"
+    UTILIZATOR ||--o{ RATING : "acorda"
+    UTILIZATOR ||--o{ FAVORITE : "salveaza"
+    UTILIZATOR ||--o{ URMARESTE : "urmareste"
+    UTILIZATOR ||--o{ URMARESTE : "este urmarit de"

@@ -1,0 +1,17 @@
+DROP TABLE tura;
+DROP TABLE program_zi;
+DROP TABLE donatie;
+DROP TABLE comanda_hrana;
+DROP TABLE hrana;
+DROP TABLE aprovizionare_hrana;
+DROP TABLE tranzactie;
+DROP TABLE adoptie;
+DROP TABLE vizita_animal;
+DROP TABLE vizita;
+DROP TABLE client;
+DROP TABLE animal;
+DROP TABLE voluntar;
+DROP TABLE receptioner;
+DROP TABLE veterinar;
+DROP TABLE angajat;
+DROP TABLE cusca;
