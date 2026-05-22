@@ -1,3 +1,5 @@
+-- 11.
+
 -- Inserări pentru tabelul cusca
 INSERT INTO cusca (capacitate, locatie) VALUES (2.00, 'interior');
 INSERT INTO cusca (capacitate, locatie) VALUES (3.50, 'exterior');
@@ -90,7 +92,7 @@ INSERT INTO hrana (tip_hrana, firma, denumire, detalii) VALUES ('umeda', 'Sheba'
 INSERT INTO hrana (tip_hrana, firma, denumire, detalii) VALUES ('uscata', 'Pedigree', 'Vital Protection', 'Pentru caini seniori');
 INSERT INTO hrana (tip_hrana, firma, denumire, detalii) VALUES ('umeda', 'Friskies', 'Plic Pui', 'Pentru pisici pui');
 
--- Inserări pentru tabelul comanda_hrana (asociativ, 10 rânduri)
+-- Inserări pentru tabelul comanda_hrana
 INSERT INTO comanda_hrana (id_hrana, id_aprovizionare, cantitate, um) VALUES (1, 1, 10.000, 'kg');
 INSERT INTO comanda_hrana (id_hrana, id_aprovizionare, cantitate, um) VALUES (2, 2, 5.500, 'kg');
 INSERT INTO comanda_hrana (id_hrana, id_aprovizionare, cantitate, um) VALUES (3, 3, 7.250, 'kg');
