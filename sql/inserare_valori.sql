@@ -71,10 +71,13 @@ INSERT INTO adoptie (id_adoptator, id_animal, id_angajat, data_adoptie) VALUES (
 -- Inserări pentru tabelul tranzactie
 INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (1, 100.00, TO_TIMESTAMP('2024-05-20 12:05:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa adoptie');
 INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (2, 200.00, TO_TIMESTAMP('2024-05-21 13:47:00', 'YYYY-MM-DD HH24:MI:SS'), 'Donatie');
-INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (3, 50.00, TO_TIMESTAMP('2024-05-22 09:30:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa consultatie');
-INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (4, 75.00, TO_TIMESTAMP('2024-05-23 18:15:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa hrana');
+INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (3, -50.00, TO_TIMESTAMP('2024-05-22 09:30:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa consultatie');
+INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (4, -75.00, TO_TIMESTAMP('2024-05-23 18:15:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa hrana');
 INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (5, 120.00, TO_TIMESTAMP('2024-05-24 08:55:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa voluntariat');
 INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (6, 80.00, TO_TIMESTAMP('2024-05-25 10:10:00', 'YYYY-MM-DD HH24:MI:SS'), 'Taxa adoptii multiple');
+INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (2, -200.00, TO_TIMESTAMP('2024-04-22 15:12:00', 'YYYY-MM-DD HH24:MI:SS'), 'Impozit donatii');
+INSERT INTO tranzactie (id_angajat, suma, data_ora, detalii) VALUES (5, 25.00, TO_TIMESTAMP('2024-04-20 15:12:00', 'YYYY-MM-DD HH24:MI:SS'), 'Donatie pentru hrana');
+
 
 -- Inserări pentru tabelul aprovizionare_hrana
 INSERT INTO aprovizionare_hrana (id_tranzactie, data_ora, furnizor) VALUES (1, TO_TIMESTAMP('2024-05-20 13:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'PetFood SRL');
