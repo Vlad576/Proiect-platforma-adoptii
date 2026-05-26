@@ -15,3 +15,4 @@ DROP TABLE receptioner;
 DROP TABLE veterinar;
 DROP TABLE angajat;
 DROP TABLE cusca;
+DROP SEQUENCE animale_seq;

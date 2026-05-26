@@ -8,7 +8,8 @@ where id_tranzactie in (
     from donatie
 );
 
--- Sa se actualizeze detaliile vizitelor care au dus la adoptie astfel incat sa apara 'Adoptie facuta' in campul detalii.
+-- Sa se actualizeze detaliile vizitelor care au dus la adoptie astfel incat sa apara 
+-- 'Adoptie facuta' in campul detalii.
 update vizita
 set detalii = 'Adoptie facuta'
 where id_vizita in (
@@ -19,13 +20,15 @@ where id_vizita in (
 
 
 
--- Sa se sterga din tabela hrana toate alimentele care nu au fost aprovizionate in ultimele 6 luni.
+-- Sa se sterga din tabela hrana toate alimentele care nu au fost aprovizionate in 
+-- ultimele 6 luni.
 delete comanda_hrana
 where id_hrana in (
     select id_hrana
     from aprovizionare_hrana
     where data_ora < add_months(sysdate, -6)
 );
+
 delete hrana
 where id_hrana in (
     select id_hrana

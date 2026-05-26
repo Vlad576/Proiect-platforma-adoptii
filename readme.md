@@ -297,7 +297,7 @@ pentru juniori, pentru adulți etc)
 
 **HRANA**(#id_hrana, tip_mancare, firma, denumire, detalii, cantitate, um)
 
-**TURA**(#data, #id_angajat, detalii)
+**TURA**(#data_ora, #id_angajat, detalii)
 
 **PROGRAM_ZI**(#data, tip_zi)
 
