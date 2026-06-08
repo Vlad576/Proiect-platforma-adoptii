@@ -111,6 +111,7 @@ CREATE TABLE hrana (
     detalii VARCHAR2(255) 
 );
 
+
 CREATE TABLE comanda_hrana (
     id_hrana NUMBER,
     id_aprovizionare NUMBER,

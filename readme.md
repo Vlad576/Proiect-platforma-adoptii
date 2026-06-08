@@ -377,3 +377,235 @@ Coloana _nume_ depinde doar de atributul *#id_animal* din cheia primară, nu de 
 - **Argument**
 
 Coloana *nume_angajat* este dependentă de coloana non-cheie primară *id_angajat*. Pentru a aduce tabelele la forma normală 3, se mută coloana *nume_angajat* în tabelul aferent informațiilor cu angajații.
+
+## 16. Optimizarea unei cereri
+Înainte de optimizare avem arborele
+```
+        π (nume, prenume)
+               |
+            DISTINCT
+               |
+             JOIN
+            /    \
+       client    vizita
+               |
+             IN
+               |
+            donatie
+```
+și expresia algebrică
+$$
+\pi_{nume,\, prenume}
+\Big(
+client \bowtie_{client.id\_client = vizita.id\_client} vizita
+\Big)
+\cap
+\Big(
+\pi_{nume,\, prenume}
+\big(
+client \bowtie \sigma_{id\_client \in donatie}(donatie)
+\big)
+\Big)
+$$
+
+**Probleme**
+- subcererea corelata generează un cost mare
+- join este făcut înainte de filtrare
+- distinc necesar pentru eliminarea redundanței
+
+Prin transformarea subcererii într-un join, optimizăm cererea, scăpăm de
+valorile redundante și utilizăm strict valorile utile. Index-ul eficientizează 
+căutarea valorilor prin pre-calcularea unui B-tree în detrimentul căutării rând
+cu rând.
+
+După optimizare avem arborele
+```
+          π (nume, prenume)
+                    |
+                  JOIN
+                /      \
+            JOIN       donatie
+          /      \
+     client     vizita
+```
+
+și expresia algebrică
+$$
+\pi_{nume,\, prenume}
+\Big(
+(client \bowtie_{client.id\_client = vizita.id\_client} vizita)
+\bowtie_{client.id\_client = donatie.id\_client} donatie
+\Big)
+$$
+
+## 17. Realizarea normalizării până la BCNF, FN4, FN5 - contraexemple
+### BCNF
+- **Contraexemplu**
+
+**VIZITA_ANIMAL**
+
+|id_animal|id_vizita|id_client|
+|---------|---------|---------|
+|5|2|7|
+|5|3|2|
+|7|2|7|
+|4|1|7|
+
+***
+- **Soluție**
+
+**VIZITA_ANIMAL**
+
+|id_animal|id_vizita|
+|---------|---------|
+|5|2|
+|5|3|
+|7|2|
+|4|1|
+
+**VIZITA**
+|id_vizita|id_client|
+|---------|---------|
+|2|7|
+|3|2|
+|1|7|
+
+***
+- **Argument**
+Candidații pentru cheia primară în tabelul inițial *VIZITĂ_ANIMAL* sunt
+*(id_animal, id_client)* sau *(id_animal, id_vizita)*. Astfel, atributul
+*id_client* este prim și deci tabelul se află în FN3 chiar dacă *id_vizită*
+determină *id_client*. Prin separarea celor 2 tabele, aducem la BCNF.
+
+### FN4
+- **Contraexemplu**
+
+**VOLUNTAR**
+
+|id_angajat|ocupatie|certificare|
+|----------|--------|-----------|
+|5|student|prim-ajutor|
+|5|student|cosmetică|
+|7|it|prim-ajutor|
+|7|meditator|prim-ajutor|
+
+***
+- **Soluție**
+
+**OCUPAȚIE_VOLUNTAR**
+
+|id_angajat|ocupatie|
+|----------|--------|
+|5|student|
+|7|it|
+|7|meditator|
+
+**CERTIFICARE_VOLUNTAR**
+
+|id_angajat|certificare|
+|----------|-----------|
+|5|prim-ajutor|
+|5|cosmetică|
+|7|prim-ajutor|
+
+***
+- **Argument**
+Atributele *ocupație* și *certificare* sunt total independente și pot avea mai
+multe valori, astfel încât fiind în același tabel vor creea multe redundanțe și
+sunt predispuse la a genera erori prin inserarea și actualizarea datelor. Prin
+creearea de două tabele separate, aceste redundanțe sunt eliminate și tabelul
+original se poate reconstrui printr-un *join*.
+
+### FN5
+- **Contraexemplu**
+
+**ADOPTIE**
+
+|id_adoptie|id_angajat|id_animal|id_adoptator|
+|----------|----------|---------|------------|
+|1|2|5|6|
+|2|3|7|6|
+|3|2|2|3|
+
+***
+- **Soluție**
+
+**ADOPȚIE_ANGAJAT_ANIMAL**
+
+|id_angajat|id_animal|
+|----------|---------|
+|2|5|
+|3|7|
+|2|2|
+
+**ADOPȚIE_ANGAJAT_ADOPATATOR**
+|id_angajat|id_adoptator|
+|----------|------------|
+|2|6|
+|3|6|
+|2|3|
+
+**ADOPȚIE_ANIMAL_ADOPTATOR**
+|id_animal|id_adoptator|
+|---------|------------|
+|5|6|
+|7|6|
+|2|3|
+
+- **Argument**
+Presupunând că tabelul *ADOPȚIE* se poate împărți în 3 relații binare independente, 
+și putând să existe reguli de genul "un angajat poate procesa doar anumite specii",
+pentru a putea ajunge la FN5 acesta trebuie descompus în cele 3 relații independente
+aferente. Tabelul original poate fi reconstruit cu 2 *join*-uri.
+
+## 19. Justificarea migrării către o bază de date de tip NoSQL
+
+Folosind modelul de consistență B.A.S.E. (Basically Available, Soft state, Eventual consistency),
+bazele de date de tip NoSQL devin utile în contexte în care au o prioritate ridicată
+volumele mari de date, datele nestructurate și schimbările frecvente de schemă, precum
+și bazele de date ale căror date sunt, preferabil, denormalizate. În timp
+ce serverele SQL au o scalare verticală dificilă și o schemă rigidă prin construcție,
+NoSQL avantajează adaugarea de noi servere și dinamismul unei scheme.  
+
+Totuși, join-urile complexe și datele cu multe constrângeri sunt dificil de implementat,
+modelarea acestora nefiind la fel de facilă, iar consistența eventuală și nu imediată
+poate genera erori în interogarea datelor.
+
+Structura în MongoDB este divizată în Database (aceeași cu baza de date din SQL),
+Collections (echivalentul tabelelor SQL) și Document (un rând din tabelul SQL, mult
+mai flexibil totuși). Spre exemplu, pentru un Document, avem:
+```JSON
+{
+  "_id": 1,
+  "nume": "Ana Popescu",
+  "varsta": 25,
+  "adrese": [
+    { "oras": "Bucuresti" },
+    { "oras": "Cluj" }
+  ],
+  "activ": true
+}
+```
+Operațiile LMD sunt:
+### Insert
+```JavaScript
+db.client.insertOne({ nume: "Ion", varsta: 30 })
+```
+
+### Update
+```JavaScript
+db.client.updateOne(
+  { nume: "Ion" },
+  { $set: { varsta: 31 } }
+)
+```
+
+### Delete
+```JavaScript
+db.client.deleteOne({ nume: "Ion" })
+```
+
+### Find (Select)
+```JavaScript
+db.client.find({ varsta: { $gt: 18 } })
+```
